@@ -35,8 +35,8 @@ sudo apt install mpg123
 🚀 Installation
 
 ```bash
-git clone https://github.com/yourusername/simple-timer.git
-cd simple-timer
+git clone [https://github.com/yourusername/simple-timer.git](https://github.com/Joha-web/simple_timer.git)
+cd simple_timer
 ```
 
 Open the timer file and make sure the sound file path is correct:
