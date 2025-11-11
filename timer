@@ -1,0 +1,78 @@
+#!/bin/bash
+
+# Path to JSON file for storing data
+DATA_FILE="/home/$(whoami)/timers.json"
+
+# Check write permissions for the file
+if [ ! -w "$DATA_FILE" ] && [ -f "$DATA_FILE" ]; then
+  echo "Error: no write permission for $DATA_FILE"
+  exit 1
+fi
+
+# Function to read data from JSON file
+read_data() {
+  if [ -f "$DATA_FILE" ]; then
+    cat "$DATA_FILE"
+  else
+    echo "{}"
+  fi
+}
+
+# Function to safely write data to JSON file
+write_data() {
+  temp_file=$(mktemp)
+  echo "$1" > "$temp_file" && mv "$temp_file" "$DATA_FILE"
+}
+
+# Read current data
+current_data=$(read_data)
+
+# Prompt for time in minutes
+read -p "Enter timer time in minutes: " minutes
+
+# Check that a number was entered
+if ! [[ "$minutes" =~ ^[0-9]+$ ]]; then
+  echo "Error: enter a number."
+  exit 1
+fi
+
+# Prompt for timer name
+read -p "Enter timer name: " tag
+
+# Extract current value for this timer
+already_done=$(echo "$current_data" | jq -r --arg tag "$tag" '.[$tag] // 0')
+
+# Output number of completed
+echo "Already done: $already_done"
+
+# Convertation seconds to minutes
+seconds=$((minutes * 60))
+echo -e "The timer is runnig for $minutes minutes"
+
+# Color for the name of the timer
+ORANGE="\e[38;5;214m"
+RESET="\e[0m"
+
+# The countdown
+while [ $seconds -gt 0 ]; do
+  mins=$((seconds / 60))
+  secs=$((seconds % 60))
+  printf "\r${ORANGE}%s${RESET} %02d:%02d" "$tag" "$mins" "$secs"
+  sleep 1
+  seconds=$((seconds - 1))
+done
+
+# The timer is completed
+echo -e "\nTime is up! Accumulating funds to achieve your goals, you're doing well."
+
+# Increasing the number of timer is sessions
+new_done=$((already_done + 1))
+updated_data=$(echo "$current_data" | jq --arg tag "$tag" --argjson count "$new_done" '.[$tag] = $count')
+
+# Updating the file
+write_data "$updated_data"
+
+# Audio playback
+
+mpg123 ./alarm.mp3 >/dev/null 2>&1 # Make sure that the file is exist
+
