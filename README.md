@@ -43,12 +43,11 @@ Open the timer file and make sure the sound file path is correct:
 
 **mpg123 ./alarm.mp3 >/dev/null 2>&1 # Ensure the file exists**
 
-
-
 Make the script executable:
 ```
 chmod +x timer
 ```
+
 Move it to your $PATH for global use
 ```
 sudo mv timer /usr/local/bin/timer
@@ -56,9 +55,14 @@ sudo mv timer /usr/local/bin/timer
 
 💡 Usage
 
-Run the timer in your terminal:
+Run the timer on your terminal globally:
 ```
 timer
+```
+
+or locally
+```
+./timer
 ```
 
 You’ll be prompted to:
@@ -67,11 +71,18 @@ Enter timer duration (in minutes)
 
 Enter timer name (tag)
 
+---
+
 Example:
+```
 Enter timer time in minutes: 10
+
 Enter timer name: workout
+
 Already done: 2
+
 The timer is running for 10 minutes
+```
 
 At the end of the countdown, a sound plays, and your timers.json file is updated:
 ```
